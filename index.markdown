@@ -4,4 +4,5 @@
 
 layout: home
 ---
+{% link /what %}
 Welcome to omikes.com
