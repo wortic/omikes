@@ -32,6 +32,12 @@ theme: jekyll-theme-console
 plugins:
   - jekyll-feed
 
+header_pages:
+  - index.markdown
+  - what.markdown
+style: light
+
+footer: 'Personal web page of M. Lundberg (@wortic) [SE]'
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
