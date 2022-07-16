@@ -39,7 +39,7 @@ header_pages:
   - what.markdown
 style: light
 
-footer: 'M. Lundberg (@wortic)'
+footer: 'M. Lundberg (<a href="https://github.com/wortic">@wortic</a>)'
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
