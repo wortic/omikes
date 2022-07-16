@@ -33,7 +33,7 @@ plugins:
   - jekyll-feed
 
 header_pages:
-  - /
+  - index.markdown
   - what.markdown
 style: light
 
