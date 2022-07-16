@@ -4,6 +4,4 @@
 
 layout: home
 ---
-<a href="what" class="menu">/what</a>
-
 Welcome to omikes.com
