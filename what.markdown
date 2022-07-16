@@ -1,6 +1,6 @@
 ---
 layout: page
-title: va?
+title: Va?
 permalink: /va/
 ---
 
