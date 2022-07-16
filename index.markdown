@@ -4,5 +4,5 @@
 
 layout: home
 ---
-{% link /what %}
+{% post_url 2020-12-10-hello %}
 Welcome to omikes.com
