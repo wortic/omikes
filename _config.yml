@@ -35,8 +35,8 @@ plugins:
 
 header_pages:
   - index.markdown
-  - what.markdown
   - about.markdown
+  - what.markdown
 style: light
 
 footer: 'M. Lundberg (@wortic)'
