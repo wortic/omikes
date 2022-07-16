@@ -4,5 +4,6 @@
 
 layout: home
 ---
-<a href="{% post_url 2020-12-10-hello %}">What</a>
+<a href="what">What</a>
+
 Welcome to omikes.com
