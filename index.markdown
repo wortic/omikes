@@ -4,4 +4,3 @@
 title: posts
 layout: home
 ---
-Welcome to omikes.com
