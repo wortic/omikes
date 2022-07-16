@@ -4,6 +4,7 @@
 
 layout: home
 ---
-<a href="what">#What</a></br>
+<a href="what">#What</a>
+</br>
 
 Welcome to omikes.com
