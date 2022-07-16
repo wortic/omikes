@@ -5,6 +5,5 @@
 layout: home
 ---
 <a href="what" class="menu">/what</a>
-<a href="test" class="menu">/test</a>
 
 Welcome to omikes.com
