@@ -1,7 +1,7 @@
 ---
 layout: page
-title: what?
-permalink: /what/
+title: va?
+permalink: /va/
 ---
 
-Good question. Don't know.
+Hmm... Bra fråga. Vet inte.
