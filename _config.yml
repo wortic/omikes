@@ -37,7 +37,7 @@ header_pages:
   - index.markdown
   - what.markdown
   - about.markdown
-style: dark
+style: light
 
 footer: 'Personal web page of M. Lundberg (@wortic) [SE]'
 # Exclude from processing.
