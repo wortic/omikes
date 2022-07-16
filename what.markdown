@@ -1,6 +1,6 @@
 ---
 layout: page
-title: What?
+title: what?
 permalink: /what/
 ---
 
