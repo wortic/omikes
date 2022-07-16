@@ -28,7 +28,7 @@ twitter_username: w0rt1c
 github_username:  wortic
 
 # Build settings
-theme: jekyll-theme-hydejack
+theme: jekyll-theme-console
 plugins:
   - jekyll-feed
 
