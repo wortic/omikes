@@ -2,10 +2,16 @@
 title: Lösryckta tankar
 layout: page
 ---
-<ul>
-  {% for post in site.posts %}
+{{ content }}
+{% assign contentwonl = content | strip_newlines %} {% unless contentwonl == ""  %} <br /> {% endunless %} <!-- add line break if there is any content -->
+
+{%- if site.posts.size > 0 -%}
+  <ul>
+    {%- for post in site.posts -%}
     <li>
-      <a href="{{ post.url }}">{{ post.date }}{{ post.title }}</a>
+      {%- assign date_format = "%Y-%m-%d" -%}
+      [ {{ post.date | date: date_format }} ] <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
     </li>
-  {% endfor %}
-</ul>
+    {%- endfor -%}
+  </ul>
+{%- endif -%}
