@@ -2,9 +2,6 @@
 title: Lösryckta tankar
 layout: page
 ---
-{{ content }}
-{% assign contentwonl = content | strip_newlines %} {% unless contentwonl == ""  %} <br /> {% endunless %} <!-- add line break if there is any content -->
-
 {%- if site.posts.size > 0 -%}
   <ul>
     {%- for post in site.posts -%}
