@@ -8,7 +8,7 @@ permalink: blogg
     {%- for post in site.posts -%}
     <li>
       {%- assign date_format = "%d%m%y" -%}
-      [{{ post.date | date: date_format }}] <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+      [{{ post.date | date: date_format }}] </br><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
     </li>
     {%- endfor -%}
   </ul>
