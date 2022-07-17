@@ -4,12 +4,8 @@ layout: page
 permalink: blogg
 ---
 {%- if site.posts.size > 0 -%}
-  <ul>
     {%- for post in site.posts -%}
-    <li>
       {%- assign date_format = "%d%m%y" -%}
-      [ {{ post.date | date: date_format }} ] <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
-    </li>
+      [{{ post.date | date: date_format }}] <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></br>
     {%- endfor -%}
-  </ul>
 {%- endif -%}
