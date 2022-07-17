@@ -1,6 +1,7 @@
 ---
 title: Lösryckta tankar
 layout: page
+permalink: blogg
 ---
 {%- if site.posts.size > 0 -%}
   <ul>
