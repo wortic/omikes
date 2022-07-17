@@ -5,8 +5,7 @@ permalink: blogg
 ---
 {%- if site.posts.size > 0 -%}
     {%- for post in site.posts -%}
-     </br>
       {%- assign date_format = "%d%m%y" -%}
-      [{{ post.date | date: date_format }}]<a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+      [{{ post.date | date: date_format }}]<a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>\n
     {%- endfor -%}
 {%- endif -%}
