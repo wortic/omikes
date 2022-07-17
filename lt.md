@@ -2,6 +2,7 @@
 title: Lösryckta tankar
 layout: page
 ---
+<a href="javascript:history.back()">Bakåt</a>
 <ul>
   {% for post in site.posts %}
     <li>
