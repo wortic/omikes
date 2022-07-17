@@ -4,7 +4,7 @@ layout: page
 permalink: blogg
 ---
 {%- if site.posts.size > 0 -%}
-  <ul style="list-style-type: none">
+  <ul id="different" style="list-style-type: none">
     {%- for post in site.posts -%}
     <li>
       {%- assign date_format = "%d%m%y" -%}
