@@ -9,9 +9,8 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
-      height: 100%;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #0d0d0d;
+      background-color: #0b0c10;
+      font-family: 'Segoe UI', sans-serif;
     }
 
     canvas {
@@ -26,248 +25,174 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background-color: rgba(255, 255, 255, 0.85);
       border-radius: 20px;
-      padding: 40px 60px;
+      padding: 40px;
+      text-align: center;
       z-index: 2;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 30px rgba(0, 255, 255, 0.15);
+      overflow: hidden;
     }
 
     .logo {
-      width: 260px;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-    }
-
-    .logo path {
-      stroke-dasharray: 1000;
-      stroke-dashoffset: 1000;
-      animation: draw 3s ease-out forwards;
-    }
-
-    .logo text {
-      opacity: 0;
-      animation: fadeInText 3s ease-out 2.5s forwards;
-    }
-
-    @keyframes draw {
-      to {
-        stroke-dashoffset: 0;
-      }
-    }
-
-    @keyframes fadeInText {
-      to {
-        opacity: 1;
-      }
+      font-size: 3em;
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 2;
     }
   </style>
 </head>
 <body>
   <canvas id="bg"></canvas>
-  <canvas id="logo-anim" width="400" height="120" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1;"></canvas>
-
   <div class="center-box">
-    <svg class="logo" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="lineGrad2" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="50%" stop-color="#7C4DFF" />
-          <stop offset="100%" stop-color="#d5ffff" />
-        </linearGradient>
-        <filter id="glow2">
-          <feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#00E5FF" flood-opacity="0.5" />
-        </filter>
-      </defs>
-      <text x="100" y="115" fill="#00E5FF" font-size="28" font-family="Consolas, monospace" letter-spacing="4">
-        OMIKES
-      </text>
-    </svg>
+    <div class="logo">Omikes</div>
   </div>
 
   <script>
     const canvas = document.getElementById("bg");
     const ctx = canvas.getContext("2d");
-    let width, height;
-    let forming = false;
-    const polyhedra = [];
-    const mouse = { x: 0, y: 0 };
-    const targetPoints = [];
+    let w = canvas.width = window.innerWidth;
+    let h = canvas.height = window.innerHeight;
 
-    function resize() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+    const polygons = [];
+    const keys = [];
+
+    class Polygon {
+      constructor(x, y, sides, size) {
+        this.x = x;
+        this.y = y;
+        this.sides = sides;
+        this.size = size;
+        this.angle = Math.random() * 2 * Math.PI;
+        this.speed = 0.5 + Math.random() * 1;
+        this.dx = Math.cos(this.angle) * this.speed;
+        this.dy = Math.sin(this.angle) * this.speed;
+        this.target = null;
+        this.timeout = null;
+      }
+
+      update() {
+        if (this.target) {
+          const dx = this.target.x - this.x;
+          const dy = this.target.y - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist > 2) {
+            this.x += dx * 0.1;
+            this.y += dy * 0.1;
+          }
+        } else {
+          const dx = this.x - mouse.x;
+          const dy = this.y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 100) {
+            this.x += dx * 0.1;
+            this.y += dy * 0.1;
+          } else {
+            this.x += this.dx;
+            this.y += this.dy;
+          }
+        }
+
+        if (this.x > w) this.x = 0;
+        if (this.x < 0) this.x = w;
+        if (this.y > h) this.y = 0;
+        if (this.y < 0) this.y = h;
+      }
+
+      draw() {
+        ctx.beginPath();
+        for (let i = 0; i < this.sides; i++) {
+          const angle = (i / this.sides) * 2 * Math.PI;
+          const px = this.x + this.size * Math.cos(angle);
+          const py = this.y + this.size * Math.sin(angle);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = "#1f3a93";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
     }
-    window.addEventListener("resize", resize);
-    resize();
 
-    for (let i = 0; i < 200; i++) {
-      polyhedra.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        z: Math.random() * 200 + 100,
-        size: Math.random() * 10 + 5,
-        speed: Math.random() * 0.5 + 0.5,
-        angle: Math.random() * Math.PI * 2,
-        sides: Math.floor(Math.random() * 5 + 3),
-        baseAngle: 0,
-        orbitRadius: Math.random() * 20 + 10,
-        tx: null,
-        ty: null
-      });
-    }
-
+    const mouse = { x: -1000, y: -1000 };
     document.addEventListener("mousemove", e => {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
     });
 
-    document.addEventListener("keydown", e => {
-      if (!forming) {
-        forming = true;
-        const chars = e.key.toUpperCase();
-        const tempCanvas = document.createElement("canvas");
-        const tempCtx = tempCanvas.getContext("2d");
-        tempCanvas.width = 200;
-        tempCanvas.height = 100;
-        tempCtx.fillStyle = "white";
-        tempCtx.font = "bold 80px Segoe UI";
-        tempCtx.fillText(chars, 10, 80);
+    function initPolygons(n = 1000) {
+      polygons.length = 0;
+      for (let i = 0; i < n; i++) {
+        const p = new Polygon(Math.random() * w, Math.random() * h, 3 + Math.floor(Math.random() * 5), 4 + Math.random() * 6);
+        polygons.push(p);
+      }
+    }
 
-        const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-        targetPoints.length = 0;
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+      for (let p of polygons) {
+        p.update();
+        p.draw();
+      }
+      requestAnimationFrame(draw);
+    }
 
-        const offsetX = Math.random() * (width - 200);
-        const offsetY = Math.random() * (height - 100);
+    function letterFormation(letter) {
+      const fontSize = 200;
+      const tempCanvas = document.createElement("canvas");
+      const tempCtx = tempCanvas.getContext("2d");
+      tempCanvas.width = w;
+      tempCanvas.height = h;
+      tempCtx.font = `${fontSize}px Segoe UI`;
+      tempCtx.fillStyle = "white";
+      const x = Math.random() * (w - fontSize * 2);
+      const y = Math.random() * (h - fontSize);
+      tempCtx.fillText(letter, x, y);
+      const imageData = tempCtx.getImageData(0, 0, w, h);
+      const data = imageData.data;
+      const targets = [];
 
-        for (let y = 0; y < imageData.height; y += 4) {
-          for (let x = 0; x < imageData.width; x += 4) {
-            const index = (y * imageData.width + x) * 4;
-            if (imageData.data[index + 3] > 128) {
-              targetPoints.push({
-                x: offsetX + x,
-                y: offsetY + y
-              });
-            }
+      for (let y = 0; y < h; y += 6) {
+        for (let x = 0; x < w; x += 6) {
+          const index = (y * w + x) * 4;
+          if (data[index + 3] > 128) {
+            targets.push({ x, y });
           }
         }
+      }
 
-        polyhedra.forEach((p, i) => {
-          if (i < targetPoints.length) {
-            p.tx = targetPoints[i].x;
-            p.ty = targetPoints[i].y;
-          }
-        });
+      for (let i = 0; i < targets.length && i < polygons.length; i++) {
+        polygons[i].target = targets[i];
+      }
 
-        setTimeout(() => {
-          forming = false;
-          polyhedra.forEach(p => {
-            p.tx = null;
-            p.ty = null;
-          });
-        }, 5000);
+      clearTargetsAfterDelay();
+    }
+
+    function clearTargetsAfterDelay() {
+      setTimeout(() => {
+        polygons.forEach(p => p.target = null);
+      }, 4000);
+    }
+
+    document.addEventListener("keydown", e => {
+      keys.push(e.key);
+      if (keys.slice(-2).join("") === "ml") {
+        letterFormation("Hej!");
+      } else {
+        letterFormation(e.key.toUpperCase());
       }
     });
 
-    function drawPolyhedron(p) {
-      const perspective = 300 / (p.z + 300);
-      const px = (p.x - width / 2) * perspective + width / 2;
-      const py = (p.y - height / 2) * perspective + height / 2;
-      const s = p.size * perspective;
+    window.addEventListener("resize", () => {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      initPolygons();
+    });
 
-      ctx.save();
-      ctx.translate(px, py);
-      ctx.rotate(p.angle);
-      ctx.beginPath();
-      for (let i = 0; i < p.sides; i++) {
-        const theta = (i / p.sides) * 2 * Math.PI;
-        const x = s * Math.cos(theta);
-        const y = s * Math.sin(theta);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.closePath();
-      ctx.strokeStyle = "rgba(0,255,255,0.25)";
-      ctx.stroke();
-      ctx.restore();
-    }
-
-    function animate() {
-      ctx.fillStyle = "rgba(13,13,13,0.35)";
-      ctx.fillRect(0, 0, width, height);
-
-      for (let p of polyhedra) {
-        if (p.tx !== null && p.ty !== null) {
-          p.x += (p.tx - p.x) * 0.05;
-          p.y += (p.ty - p.y) * 0.05;
-        } else {
-          p.baseAngle += 0.002 * p.speed;
-          p.x += Math.cos(p.angle + p.baseAngle) * p.speed;
-          p.y += Math.sin(p.angle + p.baseAngle) * p.speed;
-
-          const dx = p.x - mouse.x;
-          const dy = p.y - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 100) {
-            p.x += dx / dist * 2;
-            p.y += dy / dist * 2;
-          }
-
-          if (p.x < -50 || p.x > width + 50 || p.y < -50 || p.y > height + 50) {
-            p.x = Math.random() * width;
-            p.y = Math.random() * height;
-            p.angle = Math.random() * Math.PI * 2;
-            p.z = Math.random() * 200 + 100;
-          }
-        }
-
-        drawPolyhedron(p);
-      }
-      requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    // Dynamic polygonal morph
-    const logoCanvas = document.getElementById("logo-anim");
-    const lctx = logoCanvas.getContext("2d");
-
-    let currentSides = 3;
-    let nextSides = 6;
-    let morphProgress = 0;
-
-    function drawMorphPolygon() {
-      lctx.clearRect(0, 0, 400, 120);
-      const cx = 200, cy = 60;
-      const radius = 40;
-      const sides = Math.round(currentSides + (nextSides - currentSides) * morphProgress);
-
-      lctx.beginPath();
-      for (let i = 0; i < sides; i++) {
-        const theta = (i / sides) * 2 * Math.PI;
-        const x = cx + radius * Math.cos(theta);
-        const y = cy + radius * Math.sin(theta);
-        if (i === 0) lctx.moveTo(x, y);
-        else lctx.lineTo(x, y);
-      }
-      lctx.closePath();
-      lctx.strokeStyle = "rgba(0,255,255,0.3)";
-      lctx.lineWidth = 2;
-      lctx.stroke();
-
-      morphProgress += 0.01;
-      if (morphProgress >= 1) {
-        morphProgress = 0;
-        currentSides = nextSides;
-        nextSides = Math.floor(Math.random() * 97 + 3);
-      }
-
-      requestAnimationFrame(drawMorphPolygon);
-    }
-
-    drawMorphPolygon();
+    initPolygons();
+    draw();
   </script>
 </body>
 </html>
